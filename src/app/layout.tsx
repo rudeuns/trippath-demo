@@ -12,7 +12,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body className="antialiased lg:bg-neutral-200">
+        <main className="bg-background mx-auto min-h-dvh w-full overflow-y-auto lg:max-w-md">
+          {children}
+        </main>
+      </body>
     </html>
   );
 }
