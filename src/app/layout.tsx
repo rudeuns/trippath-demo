@@ -14,8 +14,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className="antialiased lg:bg-neutral-200">
-        <main className="bg-background mx-auto min-h-dvh w-full overflow-y-auto lg:max-w-md">
+      <body className="flex min-h-dvh overflow-y-auto antialiased lg:bg-neutral-200">
+        <main className="bg-background mx-auto flex w-full flex-col lg:max-w-md">
           <TripProvider>
             {children}
             <Toaster position="top-center" />
