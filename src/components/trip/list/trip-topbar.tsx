@@ -1,13 +1,8 @@
 import { toast } from 'sonner';
-import { Trip } from '@/types/trip';
 import NewTripForm from '@/components/trip/list/new-trip-form';
 import { MenuIcon } from 'lucide-react';
 
-interface TripTopbarProps {
-  onCreate: (trip: Trip) => void;
-}
-
-export default function TripTopbar({ onCreate }: TripTopbarProps) {
+export default function TripTopbar() {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
@@ -15,7 +10,7 @@ export default function TripTopbar({ onCreate }: TripTopbarProps) {
         <h1 className="text-xl font-semibold">My Trips</h1>
       </div>
 
-      <NewTripForm onCreate={onCreate} />
+      <NewTripForm />
     </div>
   );
 }

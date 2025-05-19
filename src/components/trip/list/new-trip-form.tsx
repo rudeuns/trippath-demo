@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTripContext } from '@/context/trip-context';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -36,10 +37,6 @@ import {
 import { CalendarIcon, PlusIcon } from 'lucide-react';
 import { Trip } from '@/types/trip';
 
-interface NewTripFormProps {
-  onCreate: (trip: Trip) => void;
-}
-
 const FormSchema = z.object({
   title: z
     .string()
@@ -56,9 +53,10 @@ const FormSchema = z.object({
     }),
 });
 
-export default function NewTripForm({ onCreate }: NewTripFormProps) {
+export default function NewTripForm() {
   const [isOpen, setIsOpen] = useState(false);
   const [date, setDate] = useState<DateRange | undefined>(undefined);
+  const { addTrip } = useTripContext();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -94,7 +92,7 @@ export default function NewTripForm({ onCreate }: NewTripFormProps) {
       endDate: data.date.to ?? '2025-01-01',
     };
 
-    onCreate(newTrip);
+    addTrip(newTrip);
     toast.success('여행이 성공적으로 추가되었습니다.');
     setIsOpen(false);
     form.reset();

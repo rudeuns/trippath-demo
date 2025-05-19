@@ -1,20 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import { useTripContext } from '@/context/trip-context';
 import TripTopbar from '@/components/trip/list/trip-topbar';
 import TripFilter from '@/components/trip/list/trip-filter';
 import TripCard from '@/components/trip/list/trip-card';
-import { Trip } from '@/types/trip';
-import { mockTrips } from '@/data/mock-trips';
 
 export default function TripListPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
-  const [trips, setTrips] = useState<Trip[]>(mockTrips);
-
-  function handleAddTrip(newTrip: Trip) {
-    setTrips((prev) => [...prev, newTrip]);
-  }
+  const { trips } = useTripContext();
 
   const filteredTrips = trips.filter(
     (trip) =>
@@ -40,7 +35,7 @@ export default function TripListPage() {
   return (
     <div className="flex flex-col">
       <header className="bg-background sticky top-0 z-10 flex flex-col gap-4 border-b p-2 pt-4">
-        <TripTopbar onCreate={handleAddTrip} />
+        <TripTopbar />
         <TripFilter
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
@@ -50,11 +45,19 @@ export default function TripListPage() {
         />
       </header>
 
-      <section className="flex flex-col gap-4 px-2 pt-4 pb-10">
-        {sortedTrips.map((trip) => (
-          <TripCard key={trip.id} trip={trip} />
-        ))}
-      </section>
+      {filteredTrips.length === 0 ? (
+        <div className="text-muted-foreground flex justify-center py-5">
+          {trips.length === 0
+            ? '아직 생성된 여행이 없습니다.'
+            : '검색 결과가 없습니다.'}
+        </div>
+      ) : (
+        <section className="flex flex-col gap-4 px-2 pt-4 pb-10">
+          {sortedTrips.map((trip) => (
+            <TripCard key={trip.id} trip={trip} />
+          ))}
+        </section>
+      )}
     </div>
   );
 }

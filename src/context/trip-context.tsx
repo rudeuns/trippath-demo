@@ -12,7 +12,7 @@ type TripContextType = {
 };
 
 const TripContext = createContext<TripContextType | undefined>(undefined);
-const STORAGE_KEY = 'trippath-demo';
+const STORAGE_KEY = 'trippath-demo-trip';
 
 export function TripProvider({ children }: { children: React.ReactNode }) {
   const [trips, setTrips] = useState<Trip[]>([]);
