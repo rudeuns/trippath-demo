@@ -19,12 +19,12 @@ export default function HeroSection() {
       </div>
 
       <div className="flex flex-col items-center gap-3">
-        <Link href="/signup">
+        <Link href="/trips">
           <Button className="gap-1">
             시작하기 <ArrowRightIcon />
           </Button>
         </Link>
-        <Link href="/sample/trips">
+        <Link href="/sample">
           <Button variant="outline">기능 살펴보기</Button>
         </Link>
       </div>

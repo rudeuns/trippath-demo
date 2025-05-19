@@ -14,7 +14,7 @@ export default function TripCard({ trip }: TripCardProps) {
   const router = useRouter();
 
   function handleClick() {
-    router.push(`sample/trips/${trip.id}`);
+    router.push(`/trips/${trip.id}`);
   }
 
   return (
