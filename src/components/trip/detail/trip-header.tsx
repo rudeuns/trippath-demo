@@ -30,7 +30,7 @@ export default function TripHeader({ trip }: TripHeaderProps) {
   const { removeTrip } = useTripContext();
   const router = useRouter();
 
-  const handleDelete = () => {
+  function handleDelete() {
     const confirmed = window.confirm(
       '여행 삭제 시 모든 일정 정보가 사라집니다. 정말로 삭제하시겠습니까?',
     );
@@ -38,7 +38,7 @@ export default function TripHeader({ trip }: TripHeaderProps) {
       removeTrip(trip.id);
       router.push('/trips');
     }
-  };
+  }
 
   return (
     <div className="bg-background sticky top-0 z-10 flex items-start justify-between gap-2 border-b p-4">
