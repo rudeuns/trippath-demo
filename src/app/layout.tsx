@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { TripProvider } from '@/context/trip-context';
+import { ScheduleProvider } from '@/context/schedule-context';
 import { Toaster } from '@/components/ui/sonner';
 import '@/globals.css';
 
@@ -17,8 +18,10 @@ export default function RootLayout({
       <body className="flex min-h-dvh overflow-y-auto antialiased lg:bg-neutral-200">
         <main className="bg-background mx-auto flex w-full flex-col lg:max-w-md">
           <TripProvider>
-            {children}
-            <Toaster position="top-center" />
+            <ScheduleProvider>
+              {children}
+              <Toaster position="top-center" />
+            </ScheduleProvider>
           </TripProvider>
         </main>
       </body>
