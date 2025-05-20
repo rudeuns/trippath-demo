@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Schedule } from '@/types/trip';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,11 @@ import {
 } from 'lucide-react';
 
 export default function ScheduleCard({ schedule }: { schedule: Schedule }) {
+  const [selectedIcon, setSelectedIcon] = useState<string | undefined>(
+    undefined,
+  );
+  const [editMode, setEditMode] = useState(false);
+
   return (
     <div className="flex flex-col gap-1">
       <div
@@ -42,10 +48,29 @@ export default function ScheduleCard({ schedule }: { schedule: Schedule }) {
           {schedule.description ?? ''}
         </p>
 
-        <div className="flex items-center justify-between gap-2">
-          <div></div>
+        <div className="flex items-center justify-end gap-2">
+          {selectedIcon && (
+            <button
+              className={cn(
+                'flex cursor-pointer rounded-md border px-2 py-1 text-xs',
+                editMode
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'text-muted-foreground',
+              )}
+              onClick={() => setEditMode(!editMode)}
+            >
+              편집 모드
+            </button>
+          )}
 
-          <ToggleGroup type="single" size="sm">
+          <ToggleGroup
+            type="single"
+            size="sm"
+            onValueChange={(val) => {
+              setSelectedIcon(val);
+              setEditMode(false);
+            }}
+          >
             <ToggleGroupItem value="cost">
               <DollarSignIcon />
             </ToggleGroupItem>
