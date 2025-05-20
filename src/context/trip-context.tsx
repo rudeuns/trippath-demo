@@ -6,9 +6,9 @@ import { Trip } from '@/types/trip';
 type TripContextType = {
   trips: Trip[];
   addTrip: (trip: Trip) => void;
-  getTripById: (id: number) => Trip | undefined;
-  removeTrip: (id: number) => void;
   updateTrip: (trip: Trip) => void;
+  removeTrip: (id: number) => void;
+  getTripById: (id: number) => Trip | undefined;
 };
 
 const TripContext = createContext<TripContextType | undefined>(undefined);
@@ -24,29 +24,29 @@ export function TripProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const syncAndSet = (updatedTrips: Trip[]) => {
+  function syncTrip(updatedTrips: Trip[]) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTrips));
     setTrips(updatedTrips);
-  };
+  }
 
-  const addTrip = (trip: Trip) => {
-    syncAndSet([...trips, trip]);
-  };
+  function addTrip(trip: Trip) {
+    syncTrip([...trips, trip]);
+  }
 
-  const getTripById = (id: number) => {
-    return trips.find((trip) => trip.id === id);
-  };
-
-  const removeTrip = (id: number) => {
-    syncAndSet(trips.filter((trip) => trip.id !== id));
-  };
-
-  const updateTrip = (updatedTrip: Trip) => {
+  function updateTrip(updatedTrip: Trip) {
     const updatedTrips = trips.map((trip) =>
       trip.id === updatedTrip.id ? updatedTrip : trip,
     );
-    syncAndSet(updatedTrips);
-  };
+    syncTrip(updatedTrips);
+  }
+
+  function removeTrip(id: number) {
+    syncTrip(trips.filter((trip) => trip.id !== id));
+  }
+
+  function getTripById(id: number) {
+    return trips.find((trip) => trip.id === id);
+  }
 
   return (
     <TripContext.Provider
