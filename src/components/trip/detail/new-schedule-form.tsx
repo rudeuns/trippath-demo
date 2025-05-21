@@ -37,7 +37,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ChevronDownIcon, ChevronUpIcon, PlusIcon } from 'lucide-react';
-import { Schedule } from '@/types/trip';
+import { Schedule } from '@/types/schedule';
 
 interface NewScheduleFormProps {
   tripId: number;

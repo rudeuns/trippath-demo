@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Schedule } from '@/types/trip';
+import { Schedule } from '@/types/schedule';
 import ScheduleCard from './schedule-card';
 import { ChevronDownIcon, ChevronRightIcon } from 'lucide-react';
 

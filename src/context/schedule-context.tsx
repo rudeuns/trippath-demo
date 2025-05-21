@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { Schedule } from '@/types/trip';
+import { Schedule } from '@/types/schedule';
 
 type ScheduleContextType = {
   schedules: Schedule[];
