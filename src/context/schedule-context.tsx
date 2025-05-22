@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { Schedule } from '@/types/schedule';
+import { Schedule, TransportRoute } from '@/types/schedule';
 
 type ScheduleContextType = {
   schedules: Schedule[];
@@ -9,6 +9,7 @@ type ScheduleContextType = {
   updateSchedule: (schedule: Schedule) => void;
   removeSchedule: (id: number) => void;
   getSchedulesByTripId: (id: number) => Schedule[];
+  addTransportRoute: (scheduleId: number, route: TransportRoute) => void;
 };
 
 const ScheduleContext = createContext<ScheduleContextType | undefined>(
@@ -50,6 +51,19 @@ export function ScheduleProvider({ children }: { children: React.ReactNode }) {
     return schedules.filter((schedule) => schedule.tripId === tripId);
   }
 
+  function addTransportRoute(scheduleId: number, route: TransportRoute) {
+    const updatedSchedules = schedules.map((schedule) => {
+      if (schedule.id !== scheduleId) return schedule;
+
+      const currentTransport = schedule.transport ?? [];
+      return {
+        ...schedule,
+        transport: [...currentTransport, route],
+      };
+    });
+    syncSchedule(updatedSchedules);
+  }
+
   return (
     <ScheduleContext.Provider
       value={{
@@ -58,6 +72,7 @@ export function ScheduleProvider({ children }: { children: React.ReactNode }) {
         updateSchedule,
         removeSchedule,
         getSchedulesByTripId,
+        addTransportRoute,
       }}
     >
       {children}

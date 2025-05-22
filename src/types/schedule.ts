@@ -18,14 +18,17 @@ export interface TransportRoute {
   memo?: string;
 }
 
-export type TransportMode =
-  | 'walk'
-  | 'car'
-  | 'taxi'
-  | 'bus'
-  | 'subway'
-  | 'train'
-  | 'plane'
-  | 'ship'
-  | 'bike'
-  | 'etc';
+export type TransportMode = (typeof TRANSPORT_MODES)[number];
+
+export const TRANSPORT_MODES = [
+  'walk',
+  'car',
+  'taxi',
+  'bus',
+  'subway',
+  'train',
+  'plane',
+  'ship',
+  'bike',
+  'etc',
+] as const;

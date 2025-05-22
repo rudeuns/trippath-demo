@@ -17,13 +17,17 @@ export default function TransportRouteSection({
 }: TransportRouteSectionProps) {
   return (
     <div className="flex flex-col gap-2">
-      {routes
-        ? routes.map((route, i) => <TransportRouteItem key={i} route={route} />)
-        : !isEditMode && (
-            <p className="text-muted-foreground text-center text-sm">
-              편집 모드를 눌러 추가해주세요.
-            </p>
-          )}
+      <div className="flex flex-col gap-4">
+        {routes
+          ? routes.map((route, i) => (
+              <TransportRouteItem key={i} route={route} />
+            ))
+          : !isEditMode && (
+              <p className="text-muted-foreground text-center text-sm">
+                편집 모드를 눌러 추가해주세요.
+              </p>
+            )}
+      </div>
 
       {isEditMode && (
         <div className="flex justify-center">
