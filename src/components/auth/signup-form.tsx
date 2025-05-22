@@ -49,7 +49,7 @@ export default function SignupForm() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  function onSubmit() {
     toast.warning('데모 버전에서는 회원가입 기능이 제공되지 않습니다.');
   }
 

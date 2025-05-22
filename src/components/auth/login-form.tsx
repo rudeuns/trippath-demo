@@ -36,7 +36,7 @@ export default function LoginForm() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  function onSubmit() {
     toast.warning('데모 버전에서는 로그인 기능이 제공되지 않습니다.');
   }
 
