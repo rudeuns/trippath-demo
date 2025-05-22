@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Schedule } from '@/types/trip';
+import { Schedule } from '@/types/schedule';
+import TransportRouteSection from '@/components/trip/detail/transport-route-section';
 import { Button } from '@/components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import {
@@ -15,7 +16,7 @@ import {
 } from 'lucide-react';
 
 export default function ScheduleCard({ schedule }: { schedule: Schedule }) {
-  const [selectedIcon, setSelectedIcon] = useState<string | undefined>(
+  const [selectedItem, setSelectedItem] = useState<string | undefined>(
     undefined,
   );
   const [editMode, setEditMode] = useState(false);
@@ -49,7 +50,7 @@ export default function ScheduleCard({ schedule }: { schedule: Schedule }) {
         </p>
 
         <div className="flex items-center justify-end gap-2">
-          {selectedIcon && (
+          {selectedItem && (
             <button
               className={cn(
                 'flex cursor-pointer rounded-md border px-2 py-1 text-xs',
@@ -67,7 +68,7 @@ export default function ScheduleCard({ schedule }: { schedule: Schedule }) {
             type="single"
             size="sm"
             onValueChange={(val) => {
-              setSelectedIcon(val);
+              setSelectedItem(val);
               setEditMode(false);
             }}
           >
@@ -85,6 +86,22 @@ export default function ScheduleCard({ schedule }: { schedule: Schedule }) {
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
+
+        {selectedItem && (
+          <div className="flex flex-col pt-2">
+            {selectedItem === 'transport' ? (
+              <TransportRouteSection
+                scheduleId={schedule.id}
+                routes={schedule.transport}
+                isEditMode={editMode}
+              />
+            ) : (
+              <p className="text-muted-foreground text-center text-sm">
+                준비 중인 기능입니다.
+              </p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
