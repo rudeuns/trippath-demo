@@ -44,43 +44,33 @@ interface NewScheduleFormProps {
   dates: string[];
 }
 
-const FormSchema = z.object({
-  date: z.string().nonempty('날짜를 선택해주세요.'),
-  content: z.string().nonempty('일정 내용을 입력해주세요.'),
-  time: z
-    .object({
-      hour: z.string().optional(),
-      minute: z.string().optional(),
-    })
-    .optional()
-    .superRefine((val, ctx) => {
-      const hour = val?.hour?.trim();
-      const minute = val?.minute?.trim();
-
-      if (!hour && !minute) return;
-
-      if (hour && minute) {
-        const isHourValid = /^\d{1,2}$/.test(hour) && +hour >= 0 && +hour <= 23;
-        const isMinuteValid =
-          /^\d{1,2}$/.test(minute) && +minute >= 0 && +minute <= 59;
-
-        if (!isHourValid || !isMinuteValid) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: '0 ~ 23시, 0 ~ 59분 사이의 숫자로 입력해주세요.',
-          });
-        }
-        return;
-      }
-
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: '시 또는 분을 모두 입력해주세요.',
-      });
-    }),
-  address: z.string().optional(),
-  description: z.string().optional(),
-});
+const FormSchema = z
+  .object({
+    date: z.string().nonempty('날짜를 선택해주세요.'),
+    content: z.string().nonempty('일정 내용을 입력해주세요.'),
+    hour: z
+      .string()
+      .optional()
+      .refine((val) => !val || /^\d+$/.test(val), {
+        message: '숫자만 입력해주세요.',
+      }),
+    minute: z
+      .string()
+      .optional()
+      .refine((val) => !val || /^\d+$/.test(val), {
+        message: '숫자만 입력해주세요.',
+      }),
+    address: z.string().optional(),
+    description: z.string().optional(),
+  })
+  .refine((data) => (!!data.hour?.trim() ? !!data.minute?.trim() : true), {
+    message: '분도 함께 입력해주세요.',
+    path: ['minute'],
+  })
+  .refine((data) => (!!data.minute?.trim() ? !!data.hour?.trim() : true), {
+    message: '시도 함께 입력해주세요.',
+    path: ['hour'],
+  });
 
 export default function NewScheduleForm({
   tripId,
@@ -96,27 +86,21 @@ export default function NewScheduleForm({
     defaultValues: {
       date: '',
       content: '',
-      time: {
-        hour: '',
-        minute: '',
-      },
+      hour: '',
+      minute: '',
       address: '',
       description: '',
     },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    const formattedTime =
-      data.time?.hour && data.time.minute
-        ? `${data.time.hour.padStart(2, '0')}:${data.time.minute.padStart(2, '0')}`
-        : undefined;
-
     const newSchedule: Schedule = {
       id: Date.now(),
       tripId,
       date: data.date,
       content: data.content,
-      time: formattedTime,
+      time:
+        data.hour && data.minute ? `${data.hour}:${data.minute}` : undefined,
       address: data.address?.trim() || undefined,
       description: data.description?.trim() || undefined,
     };
@@ -160,7 +144,7 @@ export default function NewScheduleForm({
               name="date"
               render={({ field }) => (
                 <FormItem>
-                  <Label>날짜 *</Label>
+                  <Label>날짜</Label>
                   <FormControl>
                     <Select onValueChange={field.onChange}>
                       <SelectTrigger className="w-full cursor-pointer">
@@ -185,9 +169,12 @@ export default function NewScheduleForm({
               name="content"
               render={({ field }) => (
                 <FormItem>
-                  <Label>일정 내용 *</Label>
+                  <Label>일정 내용</Label>
                   <FormControl>
-                    <Input placeholder="장소명 또는 일정 내용" {...field} />
+                    <Input
+                      placeholder="장소명 또는 일정 내용 입력"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -211,43 +198,58 @@ export default function NewScheduleForm({
               </CollapsibleTrigger>
 
               <CollapsibleContent className="flex flex-col gap-4">
-                <FormField
-                  control={form.control}
-                  name="time"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Label>시간</Label>
-                      <FormControl>
-                        <div className="flex items-center gap-2">
+                <FormItem>
+                  <Label>시간</Label>
+                  <div className="flex items-center gap-2">
+                    <FormField
+                      control={form.control}
+                      name="hour"
+                      render={({ field }) => (
+                        <FormControl>
                           <Input
                             placeholder="시 (0 ~ 23)"
                             inputMode="numeric"
-                            value={field.value?.hour ?? ''}
-                            onChange={(e) =>
-                              field.onChange({
-                                ...field.value,
-                                hour: e.target.value,
-                              })
-                            }
+                            {...field}
+                            onBlur={(e) => {
+                              const val = e.target.value.trim();
+                              if (/^\d+$/.test(val)) {
+                                const num = Math.min(23, Math.max(0, +val));
+                                field.onChange(String(num).padStart(2, '0'));
+                              }
+                            }}
                           />
-                          <span>:</span>
+                        </FormControl>
+                      )}
+                    />
+
+                    <span>:</span>
+
+                    <FormField
+                      control={form.control}
+                      name="minute"
+                      render={({ field }) => (
+                        <FormControl>
                           <Input
                             placeholder="분 (0 ~ 59)"
                             inputMode="numeric"
-                            value={field.value?.minute ?? ''}
-                            onChange={(e) =>
-                              field.onChange({
-                                ...field.value,
-                                minute: e.target.value,
-                              })
-                            }
+                            {...field}
+                            onBlur={(e) => {
+                              const val = e.target.value.trim();
+                              if (/^\d+$/.test(val)) {
+                                const num = Math.min(59, Math.max(0, +val));
+                                field.onChange(String(num).padStart(2, '0'));
+                              }
+                            }}
                           />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        </FormControl>
+                      )}
+                    />
+                  </div>
+                  <FormMessage>
+                    {form.formState.errors.hour?.message ||
+                      form.formState.errors.minute?.message}
+                  </FormMessage>
+                </FormItem>
 
                 <FormField
                   control={form.control}
