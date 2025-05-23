@@ -6,10 +6,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { cn } from '@/lib/utils';
-import { DateRange } from 'react-day-picker';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { toast } from 'sonner';
+import { Trip } from '@/types/trip';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -35,7 +35,6 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { CalendarIcon, PlusIcon } from 'lucide-react';
-import { Trip } from '@/types/trip';
 
 const FormSchema = z.object({
   title: z
@@ -43,19 +42,14 @@ const FormSchema = z.object({
     .nonempty('여행명을 입력해주세요.')
     .max(20, '여행명은 20자 이하로 입력해주세요.'),
   destination: z.string().nonempty('여행지를 입력해주세요.'),
-  date: z
-    .object({
-      from: z.string().optional(),
-      to: z.string().optional(),
-    })
-    .refine((range) => range.from && range.to, {
-      message: '여행 기간을 선택해주세요.',
-    }),
+  date: z.object(
+    { from: z.date(), to: z.date() },
+    { required_error: '여행 기간을 선택해주세요.' },
+  ),
 });
 
 export default function NewTripForm() {
   const [isOpen, setIsOpen] = useState(false);
-  const [date, setDate] = useState<DateRange | undefined>(undefined);
   const { addTrip } = useTripContext();
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -63,40 +57,22 @@ export default function NewTripForm() {
     defaultValues: {
       title: '',
       destination: '',
-      date: { from: '', to: '' },
     },
   });
-
-  function handleDateSelect(
-    range: DateRange | undefined,
-    onChange: (value: { from: string | ''; to: string | '' }) => void,
-  ) {
-    setDate(range);
-
-    if (range?.from && range.to) {
-      onChange({
-        from: format(range.from, 'yyyy-MM-dd'),
-        to: format(range.to, 'yyyy-MM-dd'),
-      });
-    } else {
-      onChange({ from: '', to: '' });
-    }
-  }
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const newTrip: Trip = {
       id: Date.now(),
       title: data.title,
       destination: data.destination,
-      startDate: data.date.from ?? '2025-01-01',
-      endDate: data.date.to ?? '2025-01-01',
+      startDate: format(data.date.from, 'yyyy-MM-dd'),
+      endDate: format(data.date.to, 'yyyy-MM-dd'),
     };
 
     addTrip(newTrip);
     toast.success('여행이 성공적으로 추가되었습니다.');
     setIsOpen(false);
     form.reset();
-    setDate(undefined);
   }
 
   return (
@@ -104,10 +80,7 @@ export default function NewTripForm() {
       open={isOpen}
       onOpenChange={(open) => {
         setIsOpen(open);
-        if (!open) {
-          form.reset();
-          setDate(undefined);
-        }
+        if (!open) form.reset();
       }}
     >
       <DialogTrigger asChild>
@@ -163,43 +136,43 @@ export default function NewTripForm() {
               render={({ field }) => (
                 <FormItem>
                   <Label>여행 기간</Label>
-                  <FormControl>
-                    <Popover>
-                      <PopoverTrigger asChild>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
                         <Button
                           variant="outline"
                           className={cn(
                             'w-full justify-start font-normal',
-                            !date && 'text-muted-foreground',
+                            !field.value?.from &&
+                              !field.value?.to &&
+                              'text-muted-foreground',
                           )}
                         >
                           <CalendarIcon />
-                          {date?.from ? (
-                            date.to ? (
-                              `${format(date.from, 'yyyy.MM.dd')} ~
-                                ${format(date.to, 'yyyy.MM.dd')}`
+                          {field.value?.from ? (
+                            field.value.to ? (
+                              `${format(field.value.from, 'yyyy.MM.dd')} ~
+                                ${format(field.value.to, 'yyyy.MM.dd')}`
                             ) : (
-                              `${format(date.from, 'yyyy.MM.dd')} ~`
+                              `${format(field.value.from, 'yyyy.MM.dd')} ~`
                             )
                           ) : (
-                            <span className="font-medium">날짜 선택</span>
+                            <span>날짜 선택</span>
                           )}
                         </Button>
-                      </PopoverTrigger>
+                      </FormControl>
+                    </PopoverTrigger>
 
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="range"
-                          locale={ko}
-                          numberOfMonths={1}
-                          selected={date}
-                          onSelect={(range) =>
-                            handleDateSelect(range, field.onChange)
-                          }
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </FormControl>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="range"
+                        locale={ko}
+                        numberOfMonths={1}
+                        selected={field.value}
+                        onSelect={field.onChange}
+                      />
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}
@@ -207,7 +180,7 @@ export default function NewTripForm() {
 
             <DialogFooter>
               <Button type="submit" className="mt-2">
-                생성하기
+                추가하기
               </Button>
             </DialogFooter>
           </form>
