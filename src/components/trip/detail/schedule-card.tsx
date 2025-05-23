@@ -4,11 +4,10 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Schedule } from '@/types/schedule';
 import TransportRouteSection from '@/components/trip/detail/transport-route-section';
-import { Button } from '@/components/ui/button';
+import EditScheduleForm from '@/components/trip/detail/edit-schedule-form';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import {
   ClockIcon,
-  EditIcon,
   DollarSignIcon,
   BookOpenIcon,
   BusIcon,
@@ -36,13 +35,7 @@ export default function ScheduleCard({ schedule }: { schedule: Schedule }) {
       <div className="flex flex-col gap-1 rounded-lg border pt-4 pr-2 pb-2 pl-4 shadow-xs">
         <div className="flex items-start justify-between gap-2">
           <p className="font-medium">{schedule.content}</p>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-muted-foreground mr-1 size-6"
-          >
-            <EditIcon />
-          </Button>
+          <EditScheduleForm scheduleId={schedule.id} />
         </div>
 
         <p className="text-muted-foreground text-sm">
