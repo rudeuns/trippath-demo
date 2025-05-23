@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
 import { Schedule } from '@/types/schedule';
-import ScheduleCard from './schedule-card';
+import ScheduleCard from '@/components/trip/detail/schedule-card';
 import { ChevronDownIcon, ChevronRightIcon } from 'lucide-react';
 
 interface DateSectionProps {
@@ -35,7 +34,7 @@ export default function DateSection({
   return (
     <div className="rounded-lg border shadow-xs">
       <button
-        className="bg-muted/50 flex w-full items-center justify-between p-4"
+        className="bg-muted/50 flex w-full cursor-pointer items-center justify-between p-4"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <span className="text-sm font-medium">
@@ -49,16 +48,13 @@ export default function DateSection({
         )}
       </button>
 
-      <div
-        className={cn(
-          'transition-all',
-          isExpanded ? 'flex flex-col gap-4 p-3' : 'hidden',
-        )}
-      >
-        {sortedSchedules.map((schedule, i) => (
-          <ScheduleCard key={i} schedule={schedule} />
-        ))}
-      </div>
+      {isExpanded && (
+        <div className="flex flex-col gap-4 p-3">
+          {sortedSchedules.map((schedule, i) => (
+            <ScheduleCard key={i} schedule={schedule} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
