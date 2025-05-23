@@ -1,3 +1,6 @@
+'use client';
+
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,9 +45,9 @@ export default function TripFilter({
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <div className="bg-muted cursor-pointer rounded-md p-1.5">
-              <SlidersHorizontalIcon className="size-4" />
-            </div>
+            <Button variant="ghost" size="icon" className="size-6">
+              <SlidersHorizontalIcon />
+            </Button>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end" className="min-w-0 px-2">
