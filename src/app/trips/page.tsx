@@ -70,7 +70,7 @@ export default function TripListPage() {
           <AlertCircleIcon />
           <AlertTitle>데모 버전</AlertTitle>
           <AlertDescription>
-            로그인 없이 기능 체험이 가능합니다.
+            로그인 없이 기능 테스트가 가능합니다.
           </AlertDescription>
         </Alert>
       </div>
