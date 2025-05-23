@@ -20,7 +20,12 @@ export default function TransportRouteSection({
       <div className="flex flex-col gap-4">
         {routes
           ? routes.map((route, i) => (
-              <TransportRouteItem key={i} route={route} />
+              <TransportRouteItem
+                key={i}
+                scheduleId={scheduleId}
+                route={route}
+                isEditMode={isEditMode}
+              />
             ))
           : !isEditMode && (
               <p className="text-muted-foreground text-center text-sm">

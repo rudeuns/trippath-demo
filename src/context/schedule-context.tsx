@@ -10,6 +10,7 @@ type ScheduleContextType = {
   removeSchedule: (id: number) => void;
   getSchedulesByTripId: (id: number) => Schedule[];
   addTransportRoute: (scheduleId: number, route: TransportRoute) => void;
+  removeTransportRoute: (scheduleId: number, routeId: number) => void;
 };
 
 const ScheduleContext = createContext<ScheduleContextType | undefined>(
@@ -64,6 +65,21 @@ export function ScheduleProvider({ children }: { children: React.ReactNode }) {
     syncSchedule(updatedSchedules);
   }
 
+  function removeTransportRoute(scheduleId: number, routeId: number) {
+    const updatedSchedules = schedules.map((schedule) => {
+      if (schedule.id !== scheduleId) return schedule;
+
+      const filteredRoutes = (schedule.transport ?? []).filter(
+        (route) => route.id !== routeId,
+      );
+      return {
+        ...schedule,
+        transport: filteredRoutes,
+      };
+    });
+    syncSchedule(updatedSchedules);
+  }
+
   return (
     <ScheduleContext.Provider
       value={{
@@ -73,6 +89,7 @@ export function ScheduleProvider({ children }: { children: React.ReactNode }) {
         removeSchedule,
         getSchedulesByTripId,
         addTransportRoute,
+        removeTransportRoute,
       }}
     >
       {children}

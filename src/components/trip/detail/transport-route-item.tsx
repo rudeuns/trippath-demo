@@ -1,17 +1,32 @@
 'use client';
 
+import { useScheduleContext } from '@/context/schedule-context';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 import { getModeName } from '@/lib/transport';
 import { getModeIcon } from '@/lib/transport-icon';
 import { TransportRoute } from '@/types/schedule';
 import { Button } from '@/components/ui/button';
-import { MoveRightIcon, NavigationIcon } from 'lucide-react';
+import { MoveRightIcon, NavigationIcon, Trash2Icon } from 'lucide-react';
 
 interface TransportRouteItemProps {
+  scheduleId: number;
   route: TransportRoute;
+  isEditMode: boolean;
 }
 
-export default function TransportRouteItem({ route }: TransportRouteItemProps) {
+export default function TransportRouteItem({
+  scheduleId,
+  route,
+  isEditMode,
+}: TransportRouteItemProps) {
+  const { removeTransportRoute } = useScheduleContext();
+
+  const handleDelete = () => {
+    const confirmed = window.confirm('정말 여행 경로를 삭제하시겠습니까?');
+    if (confirmed) removeTransportRoute(scheduleId, route.id);
+  };
+
   return (
     <div className={cn('flex gap-3 border-l-2 p-2 pr-1 shadow-sm')}>
       <div className={cn('flex w-8 flex-col items-center gap-1')}>
@@ -27,13 +42,25 @@ export default function TransportRouteItem({ route }: TransportRouteItemProps) {
             {route.to}
           </div>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-muted-foreground size-6"
-          >
-            <NavigationIcon />
-          </Button>
+          {isEditMode ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-destructive hover:bg-destructive/90 size-6 hover:text-white"
+              onClick={handleDelete}
+            >
+              <Trash2Icon />
+            </Button>
+          ) : (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-muted-foreground size-6"
+              onClick={() => toast.info('준비 중인 기능입니다.')}
+            >
+              <NavigationIcon />
+            </Button>
+          )}
         </div>
 
         {route.memo && (
